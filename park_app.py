@@ -27,11 +27,16 @@ st.header("Explore the natural beauty preserved across the country")
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Choose a page:",
-                              ["Home", "Park Data", "Wildlife", "Visitor Statistics", "Park Conservation"])
+                              ["Home", "Park Data", "Wildlife","Events", "Visitor Statistics", "Park Conservation"])
 
 if navigation == "Park Data":
     st.write("Park Data page is under construction.")
     # Code for the Park Data page needs to be in different file and imported to the app
+
+elif navigation == "Events":
+    st.write("Park Events page is under construction.")
+    from events import show_park_events
+    show_park_events()
 
 elif navigation == "Wildlife":
     st.write("Wildlife page is under construction.")
