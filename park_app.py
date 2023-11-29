@@ -2,6 +2,8 @@
 import streamlit as st
 from home import show_home
 from footer import show_footer
+from events import show_park_events
+from explore import show_explore_page
 from datetime import date
 import pandas as pd
 import numpy as np
@@ -22,25 +24,18 @@ st.set_page_config(
 
 # Header
 st.title("National Parks Data Visualizer")
-st.header("Explore the natural beauty preserved across the country")
+# st.header("Explore the natural beauty preserved across the country")
 
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Choose a page:",
-                              ["Home", "Park Data", "Wildlife","Events", "Visitor Statistics", "Park Conservation"])
+                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation"])
 
-if navigation == "Park Data":
-    st.write("Park Data page is under construction.")
-    # Code for the Park Data page needs to be in different file and imported to the app
+if navigation == "Explore":
+    show_explore_page()
 
 elif navigation == "Events":
-    st.write("Park Events page is under construction.")
-    from events import show_park_events
     show_park_events()
-
-elif navigation == "Wildlife":
-    st.write("Wildlife page is under construction.")
-    # Code for the Wildlife page needs to be in different file and imported to the app
 
 elif navigation == "Visitor Statistics":
     st.write("Visitor Statistics page is under construction.")
