@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
+
 # Function to fetch park data from the National Park Service API
 def fetch_park_data():
     api_key = "c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk"
@@ -41,6 +42,7 @@ def fetch_detailed_park_data(park_name):
         st.error("No detailed data found for the selected park.")
         return None
 
+
 # Function to display park information
 def display_park_info(park_data):
     st.subheader(park_data['fullName'])
@@ -67,12 +69,14 @@ def display_park_info(park_data):
         #         for email in contact['emailAddresses']:
         #             st.write(f"Email: {email.get('emailAddress', 'N/A')}")
 
+
 # Function to display interactive map
 def show_park_map(park_data):
     if 'latLong' in park_data and park_data['latLong']:
         lat, long = map(float, park_data['latLong'].replace('lat:', '').replace('long:', '').split(', '))
         map_data = pd.DataFrame({'lat': [lat], 'lon': [long]})
         st.map(map_data)
+
 
 def show_explore_page():
     st.title("Explore National Parks")
@@ -85,5 +89,3 @@ def show_explore_page():
         if detailed_park_data:
             display_park_info(detailed_park_data)
             show_park_map(detailed_park_data)
-
-

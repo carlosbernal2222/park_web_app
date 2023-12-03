@@ -1,15 +1,14 @@
-
 import streamlit as st
 from home import show_home
 from footer import show_footer
 from events import show_park_events
 from explore import show_explore_page
+from things_to_do import show_things_to_do_page
 from datetime import date
 import pandas as pd
 import numpy as np
 
-
-api_key="c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk"
+api_key = "c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk"
 
 # Set page config
 st.set_page_config(
@@ -29,7 +28,7 @@ st.title("National Parks Data Visualizer")
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Choose a page:",
-                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation"])
+                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation", "Things to do"])
 
 if navigation == "Explore":
     show_explore_page()
@@ -44,6 +43,9 @@ elif navigation == "Visitor Statistics":
 elif navigation == "Park Conservation":
     st.write("Park Conservation page is under construction.")
     # Code for the Park Conservation page needs to be in different file and imported to the app
+elif navigation == "Things to do":
+    show_things_to_do_page()
+
 
 else:
     # Home Page Content

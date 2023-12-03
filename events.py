@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from datetime import date, timedelta, datetime
 
+
 def get_park_events(park_code, start_date, end_date):
     # Function to fetch events for a specific park using the National Park Service API
     api_key = "c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk"
@@ -19,11 +20,13 @@ def get_park_events(park_code, start_date, end_date):
 
     return events_data['data']
 
+
 def show_park_events():
     st.subheader("Park Events")
 
     # Fetch a list of parks for the dropdown
-    parks_response = requests.get("https://developer.nps.gov/api/v1/parks", params={'api_key': 'c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk'})
+    parks_response = requests.get("https://developer.nps.gov/api/v1/parks",
+                                  params={'api_key': 'c1aDU7AI8ZjaDIJb3GsTBffXs6gRzGzmWdmJFpqk'})
     parks_data = parks_response.json()
     park_options = {park['fullName']: park['parkCode'] for park in parks_data['data']}
 
@@ -31,7 +34,8 @@ def show_park_events():
     park_name = st.selectbox("Select a Park:", list(park_options.keys()))
 
     # Radio button to choose between searching within the current month or a custom date range
-    search_option = st.radio("Choose a search option:", ["Search events within current month", "Search within a custom date range"])
+    search_option = st.radio("Choose a search option:",
+                             ["Search events within current month", "Search within a custom date range"])
 
     if search_option == "Search within a custom date range":
         # Date input for selecting a date or date range (horizontal)
@@ -53,7 +57,8 @@ def show_park_events():
                 for event in events:
                     st.write(f"**{event['title']}**")
                     st.write(f"Location: {event['location']}")
-                    st.write(f"Date: {datetime.strptime(event['datestart'], '%Y-%m-%d').strftime('%B %d, %Y')} to {datetime.strptime(event['dateend'], '%Y-%m-%d').strftime('%B %d, %Y')}")
+                    st.write(
+                        f"Date: {datetime.strptime(event['datestart'], '%Y-%m-%d').strftime('%B %d, %Y')} to {datetime.strptime(event['dateend'], '%Y-%m-%d').strftime('%B %d, %Y')}")
                     st.write(f"Description: {event['description']}", unsafe_allow_html=True)
                     st.write("---")
             else:
