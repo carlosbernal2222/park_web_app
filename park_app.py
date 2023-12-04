@@ -5,6 +5,7 @@ from footer import show_footer
 from events import show_park_events
 from explore import show_explore_page
 from alerts import show_park_alerts
+from things_to_do import show_things_to_do_page
 from datetime import date
 import pandas as pd
 import numpy as np
@@ -29,7 +30,7 @@ st.title("National Parks Data Visualizer")
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Choose a page:",
-                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation", "Park Alerts"])
+                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation", "Park Alerts","Things to do"])
 
 if navigation == "Explore":
     show_explore_page()
@@ -47,6 +48,10 @@ elif navigation == "Park Conservation":
 
 elif navigation == "Park Alerts":
     show_park_alerts()
+
+elif navigation == "Things to do":
+    show_things_to_do_page()
+
 
 else:
     # Home Page Content

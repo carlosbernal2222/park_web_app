@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 import requests
 from collections import Counter
+from matplotlib import pyplot as plt
+import plotly.express as px
 
 # Global Variable:
 SPECIAL_CHARACTER_STRING_CLEANUP = ['<br />', '<strong>', '</strong>', '<p>', ' </p>', '<a href="', '">', '</a>',
@@ -60,7 +62,7 @@ def get_activity_name(thing_to_do_number, file):
 
 
 def get_activity_description(thing_to_do_number, file):
-    string = file[thing_to_do_number]['shortDescription']
+    string = f"**Description**: %s"%file[thing_to_do_number]['shortDescription']
     return string_clean_up(string)
 
 
@@ -91,48 +93,50 @@ def are_pets_allowed(number, file):
     petDescript = string_clean_up(file[number]['petsDescription'])
     string = ''
     if file[number]['arePetsPermitted'] == 'true':
-        string = "Pets allowed: Yes.  \n{}".format(petDescript)
+        string = f"**Pets Allowed**: Yes   \n%s" % petDescript
     elif file[number]['arePetsPermitted'] == 'false':
-        string = "Pets allowed: No.  \n{}".format(petDescript)
+        string = f"**Pets Allowed**: No   \n%s" % petDescript
     return string
 
 
 def are_reservations_required(number, file):
     reserDescript = string_clean_up(file[number]['reservationDescription'])
+    string = ''
     if file[number]['isReservationRequired'] == 'true':
-        return 'Reservations needed: Yes.  \n{}'.format(reserDescript)
+        string = f"**Reservation needed**: Yes   \n%s" % reserDescript
     elif file[number]['isReservationRequired'] == 'false':
-        return 'Reservations needed: No.  \n{}'.format(reserDescript)
+        string = f"**Reservation needed**: No   \n%s" % reserDescript
+    return string
 
 
 def what_type_of_activity(number, file):
-    return "Type of activity: {}".format(file[number]['activities'][0]['name'])
+    return f"**Type of Activity**: %s" % file[number]['activities'][0]['name']
 
 
 def are_available_time_of_day(number, file):
     time_of_day = file[number]['timeOfDay']
     if not time_of_day:
-        return 'Activity Time: Not Currently Known'
+        return f"**Activity Time**: Currently Unknown"
     string = ", ".join(str(element) for element in time_of_day)
-    return "Activity Time: {}".format(string)
+    return f"**Activity Time**: Currently Unknown%s" % string
 
 
 def are_available_seasons(number, file):
     seasons = file[number]['season']
     if not seasons:
-        return 'Seasons: Not Currently Known'
+        return f"**Season Available**: Currently Unknown"
     string = ", ".join(str(element) for element in seasons)
-    return "Seasons: {}".format(string)
+    return f"**Season Available**: Currently Unknown%s" % string
 
 
 def are_fees_applicable(number, file):
     string = ''
     if file[number]['doFeesApply'] == 'true':
-        string = 'Fees: Yes \n{}'.format(file[number]['feeDescription'])
+        string = f"**Fees:**: Yes \n%s" % file[number]['feeDescription']
     elif file[number]['doFeesApply'] == 'false':
-        string = 'Fees: No  \n{}'.format(file[number]['feeDescription'])
+        string = f"**Fees:**: No \n%s" % file[number]['feeDescription']
     else:
-        string = 'Fees: Unknown'
+        string = f"**Fees:**: Currently Unknown \n"
     return string_clean_up(string)
 
 
@@ -144,11 +148,11 @@ def display_activities(file):
         expander.image(get_activity_image(counter, file), width=600)
         expander.write(str(get_activity_description(counter, file)))
         expander.write(are_pets_allowed(counter, file))
-        expander.write(are_reservations_required(counter, file))
         expander.write(what_type_of_activity(counter, file))
         expander.write(are_available_time_of_day(counter, file))
         expander.write(are_available_seasons(counter, file))
         expander.write(are_fees_applicable(counter, file))
+        expander.write(are_reservations_required(counter, file))
         counter += 1
 
 
@@ -167,6 +171,18 @@ def display_topics_dataframe(data):
     st.write(dataFrame)
 
 
+def display_topics_pie_chart(data):
+    names = list(data.keys())
+    values = list(data.values())
+    dataFrame = pd.DataFrame({"Name of Topic": names, "Number of Appearances": values})
+
+    fig = px.pie(dataFrame, values=values, names=names,
+                 title=f'Pie Plot',
+                 height=400, width=300)
+    fig.update_layout(margin=dict(l=20, r=20, t=30, b=0), )
+    st.plotly_chart(fig, use_container_width=True)
+
+
 # this is to clean some of the strings that the API brings
 def string_clean_up(string):
     clean_string = string
@@ -182,14 +198,12 @@ def show_things_to_do_page():
     choice_Of_Park = st.selectbox(label="Select a National Park", options=list(park_Name_and_code.keys()))
     ListOfThingsTodo = fetch_things_to_do_data(park_Name_and_code[choice_Of_Park])
     if ListOfThingsTodo:
-        st.sidebar.title("Activity Visualization")
-        st.sidebar.write('Select:')
-        showgraph = st.sidebar.checkbox(label="Show List of Activities")
-        show = st.sidebar.checkbox(label="Show Data of Activities")
-        if showgraph:
-            st.info("You have chosen: {}".format(choice_Of_Park))
+        choices = st.sidebar.radio("Activity Visualization", ["Show List of Activities", "Show Data of Activities",
+                                                              "Show Instances of Select Topic"])
+        if choices == "Show List of Activities":
+            st.success("You have chosen: {}".format(choice_Of_Park))
             display_activities(ListOfThingsTodo)
-        if show:
+        if choices == "Show Data of Activities":
             st.title("The following list encompasses the diverse range of topics and attractions available within the "
                      "park.")
             col1, col2 = st.columns([1, 3])
@@ -199,6 +213,13 @@ def show_things_to_do_page():
             with col2:
                 st.write("Bar Graph")
                 display_topics_graph(get_topics_list(ListOfThingsTodo))
+                display_topics_pie_chart(get_topics_list(ListOfThingsTodo))
+        if choices == "Show Instances of Select Topic":
+            multiselect = st.multiselect(label='Select the topics you want to see',
+                                         options=get_topics_list(ListOfThingsTodo).keys())
+            for key in multiselect:
+                # st.write("{}: {} Instances".format(key, get_topics_list(ListOfThingsTodo)[key]))
+                st.write(f"**%s**: %s Instances" % (key, get_topics_list(ListOfThingsTodo)[key]))
 
     else:
         st.error(
