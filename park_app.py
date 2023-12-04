@@ -30,7 +30,7 @@ st.title("National Parks Data Visualizer")
 # Sidebar for navigation
 st.sidebar.title("Navigation")
 navigation = st.sidebar.radio("Choose a page:",
-                              ["Home", "Explore", "Events", "Visitor Statistics", "Park Conservation", "Park Alerts","Things to do"])
+                              ["Home", "Explore", "Events", "Park Alerts"])
 
 if navigation == "Explore":
     show_explore_page()
@@ -38,24 +38,13 @@ if navigation == "Explore":
 elif navigation == "Events":
     show_park_events()
 
-elif navigation == "Visitor Statistics":
-    st.write("Visitor Statistics page is under construction.")
-    # Code for the Visitor Statistics page needs to be in different file and imported to the app
-
-elif navigation == "Park Conservation":
-    st.write("Park Conservation page is under construction.")
-    # Code for the Park Conservation page needs to be in different file and imported to the app
-
 elif navigation == "Park Alerts":
     show_park_alerts()
 
-elif navigation == "Things to do":
-    show_things_to_do_page()
-
-
 else:
     # Home Page Content
-    show_home()
+    show_things_to_do_page()
+
 
 # Footer
 show_footer()
